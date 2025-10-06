@@ -3,7 +3,7 @@
 
 本项目力图实现[bga_issue_blog](https://github.com/bingoogolapple/bga_issue_blog)的效果，但更注重于数据的展示和浏览，更像一个数据展示框架。同样使用flutter，并进行了屏幕适配，支持Android、iOS、Web、Windows Desktop。
 
-DEMO
+[DEMO](https://madderscientist.github.io/GratisHub_issue_blog/)
 
 ## 框架设计
 主要功能是展示issue里面的内容。为此，本项目基本框架为：主页面和一个灵动的侧边栏。和常见的侧边栏不同的是，本项目的侧边栏设置在右侧，目的是为了让浏览issue内容时，左侧是list，右侧是具体内容，就像微信一样。再考虑到内容一般都是左对齐，为了避免这个宽度可变的“灵动侧栏”影响主区域的位置，设置在右侧也是合理的。
@@ -14,6 +14,19 @@ DEMO
 1. issueStat项目的issue统计数据 + 我的github账号信息
 2. JE曲谱库的readme + 目录
 3. JE曲谱库的issue + 筛选/详情
+
+<div style="overflow-x: auto; white-space: nowrap; padding: 8px 0;">
+    <img src="READMEsrc/page_overview.jpeg" alt="Issue统计" style="width: 400px; ; margin-right: 8px; display: inline-block;">
+    <img src="READMEsrc/page_readme.jpeg" alt="readme展示" style="width: 400px; ; margin-right: 8px; display: inline-block;">
+</div>
+<div style="overflow-x: auto; white-space: nowrap; padding: 8px 0;">
+    <img src="READMEsrc/page_issue.jpeg" alt="Issue列表" style="width: 400px; ; margin-right: 8px; display: inline-block;">
+    <img src="READMEsrc/page_detail.jpeg" alt="Issue详情" style="width: 400px; margin-right: 8px; display: inline-block;">
+</div>
+<div style="overflow-x: auto; white-space: nowrap; padding: 8px 0;">
+    <img src="READMEsrc/竖屏.jpeg" alt="竖屏的侧栏" style="height: 300px; margin-right: 8px; display: inline-block;">
+    <img src="READMEsrc/竖屏真机.jpg" alt="竖屏-真机" style="height: 300px; margin-right: 8px; display: inline-block;">
+</div>
 
 ## 使用与发布
 1. 安装依赖
@@ -102,4 +115,3 @@ DEMO
 - 横竖屏切换
 
     当显示issue详情的时候，横屏切换到竖屏要保持详情展示，即竖屏要全屏。这就是注释中的“重要内容”的含义。
-
