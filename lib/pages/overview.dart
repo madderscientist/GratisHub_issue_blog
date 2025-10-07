@@ -275,13 +275,12 @@ class _OverviewPageState extends State<OverviewPage>
                 connectorLineColor: Colors.black54,
                 connectorLineStrokeWidth: 1.0,
                 chartAlignment: ChartAlignment.center,
-                labelStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
+                labelStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
                   color: Colors.black87,
                   fontWeight: FontWeight.w500,
                 ),
-                valueStyle: const TextStyle(
+                valueStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
                   color: Colors.black54,
-                  fontSize: 10.0,
                   fontWeight: FontWeight.w600,
                 ),
               ),

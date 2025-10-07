@@ -338,26 +338,25 @@ class _ResponsiveUIState extends State<ResponsiveUI> {
         valueListenable: pageIndex,
         builder: (context, selectedIndex, _) {
           return Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: IconButton(
-                  icon: const Icon(Icons.menu),
-                  onPressed: () {
-                    if (sideConfig.value.sideWidthRatio == 0) {
-                      sideConfig.value.sideWidthRatio = 0.84;
-                      sideConfig.value.close = () {
-                        sideConfig.value.sideWidthRatio = 0;
-                        sideConfig.value.close = null;
-                        sideConfig.notify();
-                      };
-                    } else {
+              IconButton(
+                padding: EdgeInsets.symmetric(horizontal: Theme.of(context).textTheme.labelSmall?.fontSize ?? 9),
+                icon: const Icon(Icons.menu),
+                onPressed: () {
+                  if (sideConfig.value.sideWidthRatio == 0) {
+                    sideConfig.value.sideWidthRatio = 0.84;
+                    sideConfig.value.close = () {
                       sideConfig.value.sideWidthRatio = 0;
                       sideConfig.value.close = null;
-                    }
-                    sideConfig.notify();
-                  },
-                ),
+                      sideConfig.notify();
+                    };
+                  } else {
+                    sideConfig.value.sideWidthRatio = 0;
+                    sideConfig.value.close = null;
+                  }
+                  sideConfig.notify();
+                },
               ),
               for (int i = 0; i < pages.length; i++)
                 Expanded(

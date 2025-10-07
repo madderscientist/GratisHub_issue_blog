@@ -326,7 +326,7 @@ class IssueLabel {
       ),
       child: Text(
         name,
-        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+        style: Theme.of(context).textTheme.labelLarge?.copyWith(
           color:
               ThemeData.estimateBrightnessForColor(baseColor) == Brightness.dark
               ? Colors.white

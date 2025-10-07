@@ -92,12 +92,16 @@ class _WebImageState extends State<WebImage> {
               h = maxWidth / w * h;
               w = maxWidth;
             }
-            final img =
-                web.document.getElementById(_viewType) as web.HTMLImageElement?;
-            if (img != null) {
-              img.style.width = '${w}px';
-              img.style.height = '${h}px';
-            }
+            // 推迟能解决横竖屏切换时img大小和SizedBox不一致的问题
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              final img =
+                  web.document.getElementById(_viewType)
+                      as web.HTMLImageElement?;
+              if (img != null) {
+                img.style.width = '${w}px';
+                img.style.height = '${h}px';
+              }
+            });
             const block = SizedBox.expand();
             return SizedBox(
               width: w,

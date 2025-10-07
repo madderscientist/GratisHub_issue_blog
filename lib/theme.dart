@@ -104,13 +104,16 @@ TextTheme responsiveTextTheme(BuildContext context) {
     ),
 
     labelLarge: base.labelLarge?.copyWith(
-      fontSize: base.labelLarge!.fontSize! * textScale,
+      // fontSize: base.labelLarge!.fontSize! * textScale,
+      fontSize: 13 * textScale,
     ),
     labelMedium: base.labelMedium?.copyWith(
-      fontSize: base.labelMedium!.fontSize! * textScale,
+      // fontSize: base.labelMedium!.fontSize! * textScale,
+      fontSize: 11 * textScale,
     ),
     labelSmall: base.labelSmall?.copyWith(
-      fontSize: base.labelSmall!.fontSize! * textScale,
+      // fontSize: base.labelSmall!.fontSize! * textScale,
+      fontSize: 9 * textScale,
     ),
   );
 }
