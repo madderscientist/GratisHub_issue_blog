@@ -241,7 +241,7 @@ class GithubRequester<T> {
   Future<List<T>> fetchNext({bool reset = false}) async {
     if (isLoading) throw StateError("searching now (/ﾟДﾟ)/");
     if (reset) {
-      issueNumber = 0;
+      issueNumber = -1;
       _nextUrl = "";
     }
     if (!hasNext) throw StateError("no more ╮(๑•́ ₃•̀๑)╭");

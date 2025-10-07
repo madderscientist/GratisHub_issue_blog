@@ -237,7 +237,7 @@ class _OverviewPageState extends State<OverviewPage>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '标签分布',
+          'Label Distribution',
           style: Theme.of(
             context,
           ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),

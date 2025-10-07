@@ -127,13 +127,27 @@ class _DataviewPageState extends State<DataviewPage>
         return RefreshIndicator(
           onRefresh: () async {
             if (displayedIssues.value == latest) {
-              final newIssues = await issueRequester.fetchNext(reset: true);
               latest!.clear();
+              displayedIssues.notify();
+              final newIssues = await issueRequester.fetchNext(reset: true);
               latest!.addAll(newIssues);
               displayedIssues.notify();
             } else if (searcher != null) {
+              displayedIssues.value.clear();
+              displayedIssues.notify();
               displayedIssues.value = await searcher!.fetchNext(reset: true);
             }
+            toastification.show(
+              type: ToastificationType.success,
+              style: ToastificationStyle.flatColored,
+              description: Text("Refreshed successfully"),
+              alignment: Alignment.bottomCenter,
+              autoCloseDuration: const Duration(seconds: 2),
+              borderRadius: BorderRadius.circular(12.0),
+              showProgressBar: false,
+              dragToClose: true,
+              applyBlurEffect: true,
+            );
           },
           child: NotificationListener<ScrollNotification>(
             onNotification: (ScrollNotification scrollInfo) {

@@ -56,6 +56,7 @@
 
 ## 文件结构与配置
 ```
+./lib
 │  common.dart  [不用管]一些定义和工具
 │  config.dart  【要修改】默认展示的github仓库
 │  github_request.dart  [不用管]github rest api 的封装，和怎么显示（issue、comment、label等）
@@ -83,6 +84,8 @@
 所以——如果需要展示的内容和DEMO里面的一样，那只需要修改 [`responsive_ui.dart`](./lib/responsive_ui.dart) 里面的传参——就行啦！具体来说，修改 `pages` 变量。
 
 如果想要进一步定制，需要有一定的flutter认知（结合AI也不难！）
+
+想要更改Web的启动动画？直接改 [./web/index.html](./web/index.html)。
 
 ## 尚存在的问题
 - SVG支持不足（是插件的问题）

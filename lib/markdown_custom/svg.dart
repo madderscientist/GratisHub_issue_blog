@@ -38,7 +38,7 @@ class SvgNode extends ImageNode {
       height: height,
       fit: BoxFit.contain,
       clipBehavior: Clip.none,
-      placeholderBuilder: (context) => Center(child: CircularProgressIndicator()),
+      placeholderBuilder: (BuildContext context) => buildErrorImage(imageUrl, attributes['alt'] ?? '', null),
     );
     // 和ImageNode相比少了点击放大
     return WidgetSpan(child: svgWidget);
