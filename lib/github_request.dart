@@ -429,6 +429,7 @@ class RawIssue {
     return (BuildContext context) {
       final size = MediaQuery.of(context).size;
       return CustomScrollView(
+        key: ValueKey('issue_${url}_$time'),  // 如果不传，会复用一些组件导致不刷新
         slivers: [
           SliverAppBar(
             title: LongPressCopyBubble(text: title),

@@ -178,9 +178,9 @@
 
 <script>
   // https://docs.flutter.dev/platform-integration/web/initialization
-  {{flutter_js}}
-  {{flutter_build_config}}
-
+  {{{flutter_js}}}
+  {{{flutter_build_config}}}
+  // 加载动画管理
   _flutter.loader.load({
     onEntrypointLoaded: function (engineInitializer) {
       engineInitializer.initializeEngine({
@@ -191,6 +191,133 @@
       });
     }
   });
+
+  // 点击图片放大预览
+  function showImageOverlay(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    // 创建 overlay 背景
+    const overlay = document.createElement('div');
+    overlay.className = 'overlay';
+    overlay.style.cssText = [
+      'position:fixed',
+      'inset:0',
+      'background:rgba(0,0,0,0.65)',
+      'z-index:2147483647',
+      'cursor:zoom-out'
+    ].join(';');
+    // 克隆一个图片用于动画（fixed 定位）
+    const clone = document.createElement('img');
+    clone.src = el.src;
+    clone.style.boxShadow = '0 8px 30px rgba(0,0,0,0.6)';
+    clone.style.position = 'fixed';
+    clone.style.transition = 'all 300ms cubic-bezier(.2,.8,.2,1)';
+    clone.style.willChange = 'transform, left, top, width, height';
+    clone.style.cursor = 'zoom-out';
+    // 计算原图在视窗的位置与尺寸
+    const rect = el.getBoundingClientRect();
+    const scrollX = window.scrollX || window.pageXOffset;
+    const scrollY = window.scrollY || window.pageYOffset;
+    // left/top 使用视口坐标
+    clone.style.left = `${rect.left}px`;
+    clone.style.top = `${rect.top}px`;
+    clone.style.width = `${rect.width}px`;
+    clone.style.height = `${rect.height}px`;
+    // 为了保留原始位置的占位效果，隐藏原图但保留占位
+    const prevVisibility = el.style.visibility;
+    el.style.visibility = 'hidden';
+    // 把 clone 和 overlay 添加入 DOM
+    overlay.appendChild(clone);
+    document.body.appendChild(overlay);
+    // 禁用页面滚动以更好地呈现 overlay
+    const prevBodyOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    // 触发到中间放大的目标尺寸：最大 95% 的视窗，同时保持图片纵横比
+    function computeTarget() {
+      const vpW = window.innerWidth;
+      const vpH = window.innerHeight;
+      const maxW = vpW * 0.95;
+      const maxH = vpH * 0.95;
+      // 创建临时图片来获取固有比率
+      const img = new Image();
+      img.src = clone.src;
+      return new Promise(resolve => {
+        img.onload = () => {
+          const ratio = img.naturalWidth / img.naturalHeight;
+          let targetW = img.naturalWidth;
+          let targetH = img.naturalHeight;
+          // 缩放到 maxW/maxH 中的最大适配
+          if (targetW > maxW) {
+            targetW = maxW;
+            targetH = targetW / ratio;
+          }
+          if (targetH > maxH) {
+            targetH = maxH;
+            targetW = targetH * ratio;
+          }
+          const left = (vpW - targetW) / 2;
+          const top = (vpH - targetH) / 2;
+          resolve({ left, top, width: targetW, height: targetH });
+        };
+        if (img.complete) img.onload();// 如果图片已经缓存
+      });
+    }
+    // 开始动画到居中
+    let currentTarget = null;
+    function applyTarget(t) {
+      // 强制重绘以确保 transition 生效
+      clone.getBoundingClientRect();
+      requestAnimationFrame(() => {
+        clone.style.left = `${t.left}px`;
+        clone.style.top = `${t.top}px`;
+        clone.style.width = `${t.width}px`;
+        clone.style.height = `${t.height}px`;
+      });
+    }
+    computeTarget().then((t) => {
+      currentTarget = t;
+      applyTarget(t);
+    });
+    // 在窗口尺寸改变时，重新计算目标位置/尺寸并应用（仅在放大状态）
+    function onResize() {
+      if (!isZoomed) return;
+      computeTarget().then((t) => {
+        currentTarget = t;
+        applyTarget(t);
+      });
+    }
+    window.addEventListener('resize', onResize);
+
+    let isZoomed = true;
+
+    // 关闭（反向动画回到原位，然后清理）
+    function close() {
+      if (!isZoomed) return;
+      isZoomed = false;
+      // 动画回原位置/尺寸
+      clone.style.left = `${rect.left}px`;
+      clone.style.top = `${rect.top}px`;
+      clone.style.width = `${rect.width}px`;
+      clone.style.height = `${rect.height}px`;
+      // 等待 transitionend 清理 DOM
+      const onEnd = (e) => {
+        // 只处理 clone 的 transitionend
+        if (e.target !== clone) return;
+        clone.removeEventListener('transitionend', onEnd);
+        el.style.visibility = prevVisibility || '';
+        document.body.style.overflow = prevBodyOverflow || '';
+        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+        window.removeEventListener('resize', onResize);
+        document.removeEventListener('keydown', onKey);
+      };
+      clone.addEventListener('transitionend', onEnd);
+    }
+
+    // 点击 clone 或 overlay 关闭
+    overlay.addEventListener('pointerup', (ev) => { close(); });
+    function onKey(ev) { if (ev.key === 'Escape') close(); }
+    document.addEventListener('keydown', onKey);
+  }
 </script>
 
 </html>

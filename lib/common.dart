@@ -4,7 +4,7 @@ import 'package:toastification/toastification.dart';
 
 import 'package:markdown_widget/markdown_widget.dart';
 import 'markdown_custom/video.dart';
-import 'markdown_custom/svg.dart';
+import 'markdown_custom/more_img.dart';
 import 'markdown_custom/custom_node.dart';
 
 typedef WBuilder = Widget Function(BuildContext);
@@ -63,7 +63,7 @@ void showError(String msg) {
 }
 
 final mdHtmlSupport = MarkdownGenerator(
-  generators: [videoGeneratorWithTag, svgImgGenerator],
+  generators: [videoGeneratorWithTag, moreImgGenerator],
   textGenerator: (node, config, visitor) =>
       CustomTextNode(node.textContent, config, visitor),
   richTextBuilder: (span) => Text.rich(span),

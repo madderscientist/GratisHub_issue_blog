@@ -69,10 +69,15 @@
 │  theme.dart   【可以不管】文字尺寸自适应屏幕大小，要修改文字大小就改这里
 │
 ├─markdown_custom   [不用管]让markdown_widget支持更多东西
-│      custom_node.dart
-│      html_support.dart
-│      svg.dart
-│      video.dart
+│  │  custom_node.dart
+│  │  html_support.dart
+│  │  more_img.dart 【有点重要】如果web需要图片跨域，修改 moreImgGenerator
+│  │  video.dart
+│  │
+│  └─web_image  [不用管]web端图片兼容
+│          web_image.dart
+│          web_image_io.dart
+│          web_image_web.dart
 │
 └─pages 【很重要】可以用的页面！
         dataview.dart   【超重要】issue列表和issue内容展示
@@ -87,10 +92,10 @@
 
 想要更改Web的启动动画？直接改 [./web/index.html](./web/index.html)。
 
-## 尚存在的问题
-- SVG支持不足（是插件的问题）
+## 尚存在的问题&没做的
 - 没实现登录（以数据展示为目标貌似不需要）
 - 请求不能太快（github有请求频率限制，一不小心就超限了。不过毕竟是白嫖嘛~）
+- SVG支持不足（是插件的问题）：网页上已经通过html标签支持了，其他平台不支持
 
 ## 开发相关
 ### UI架构
@@ -118,3 +123,10 @@
 - 横竖屏切换
 
     当显示issue详情的时候，横屏切换到竖屏要保持详情展示，即竖屏要全屏。这就是注释中的“重要内容”的含义。
+
+### web图片显示相关
+flutter web已经完全转用canvas了，所以图片必须请求原始数据，因此有跨域限制。此外，若部署在 Github Pages 上，由于 Github Page 是 https，导致请求 http 的图片也会被限制。而之所以别的web应用没有问题，是因为`<img>`引用图片不需要原始数据，没有跨域/跨协议的问题。而在别的平台，没有浏览器的限制。
+
+[`WebImage`](lib/markdown_custom/web_image/web_image_web.dart)正是为了解决web图片显示问题的，原理正是用`<img>`标签。此方法还能正确显示SVG。然而在我试图实现“点击放大”时有了问题：由于flutter web中html标签永远位于顶层，导致即使视觉上`<img>`被遮住（例如SliverAppBar），点击遮挡物时首先响应的还是`<img>`的onclick。但是——没想到用Stack挡一层竟然可以拦截！（说好的在顶层呢？）于是欣然使用。
+
+值得一提的是，图片放大用的是js，因此非常丝滑~

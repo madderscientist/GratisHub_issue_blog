@@ -79,7 +79,7 @@ class _ResponsiveUIState extends State<ResponsiveUI> {
     child: Expanded(
       child: ValueListenableBuilder<int>(
         valueListenable: pageIndex,
-        builder: (_, index, __) => IndexedStack(
+        builder: (_, index, _) => IndexedStack(
           index: index,
           children: [for (final p in pages) p.page],
         ),

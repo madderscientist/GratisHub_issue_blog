@@ -44,6 +44,7 @@ dependencies:
   flutter_widget_from_html_core: ^0.17.0
   html: ^0.15.6
   flutter_svg: ^2.2.1
+  web: ^1.1.1
   # 绘图
   material_charts: ^0.0.38
 

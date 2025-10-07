@@ -1,0 +1,1 @@
+export 'web_image_web.dart' if (dart.library.io) 'web_image_io.dart';
