@@ -19,7 +19,7 @@ jobs:
           flutter-version: '3.35.5'
           channel: stable
       - run: flutter pub get
-      - run: flutter build web --release --base-href=/${{ github.event.repository.name }}/
+      - run: flutter build web --release --wasm --base-href=/${{ github.event.repository.name }}/
 
       - name: Upload to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4

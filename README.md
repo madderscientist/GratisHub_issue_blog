@@ -45,12 +45,13 @@
 
 4. 打包（以web为例）
     ```
-    flutter build web
+    flutter build web --release --wasm
     ```
+    如果报错，尝试删去`--wasm`再编译。参考: [Web renderers](https://docs.flutter.dev/platform-integration/web/renderers)
 
 5. 发布到 GitHub Pages
 
-    将上一步得到的`build/web`下的上传到一个开了Pages的Github仓库中即可
+    将上一步得到的`build/web`下的上传到一个开了Pages的Github仓库中即可。打包和发布可以使用本项目的 Github Action.
 
 更多可以参考：[bga_issue_blog](https://github.com/bingoogolapple/bga_issue_blog)
 
@@ -99,11 +100,11 @@
 
 ## 开发相关
 ### UI架构
-模型：子页面$P_i$的信息展示分为两部分: $A_i$和$B_i$。其中$A_i$是主页面；$B_i$是侧栏，根据$A_i$的操作决定其内容。为此制定了子页面的接口 [`SubPageWidget`](./lib/common.dart)。
+模型：子页面 $P_i$ 的信息展示分为两部分: $A_i$ 和 $B_i$ 。其中 $A_i$ 是主页面； $B_i$ 是侧栏，根据 $A_i$ 的操作决定其内容。为此制定了子页面的接口 [`SubPageWidget`](./lib/common.dart)。
 
 父元素负责实现响应式布局，也就是A和B的位置会随着屏幕形状的改变而改变。父元素仅提供布局框架，即A和B部分的位置；而具体A和B的内容，则由子页面控制。
 
-子元素用`indexedStack`组织，用`GlobalKey`保持状态。A和B采用不对等地位：切换到$P_i$时，首先让A布局显示$A_i$，然后根据$A_i$的状态会触发B布局显示$B_i$。于是，将$B_i$的渲染用函数的方式传递给父页面。
+子元素用`indexedStack`组织，用`GlobalKey`保持状态。A和B采用不对等地位：切换到$P_i$时，首先让A布局显示 $A_i$ ，然后根据 $A_i$ 的状态会触发B布局显示 $B_i$ 。于是，将 $B_i$ 的渲染用函数的方式传递给父页面。
 
 之所以是函数而不是Widget，是因为flutter的Widget是频繁重建的，所以要求每个子页面都提供B布局。而要状态共通（或者说消息传递），最好的方法是引用同一个，flutter中用ValueNotifier实现，于是封装了更自由的[`LazyNotifier`](./lib/lazy_notifier.dart)。
 

@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:markdown_widget/markdown_widget.dart';
 
@@ -5,9 +6,17 @@ MarkdownConfig myMarkdownConfig = MarkdownConfig.defaultConfig;
 
 const Color themeColor = Colors.purpleAccent;
 
+/// 静态全局主题
+final ThemeData themeData = ThemeData(
+  colorScheme: ColorScheme.fromSeed(seedColor: themeColor),
+  useMaterial3: true,
+);
+
+/// 响应式文字主题，根据屏幕宽度调整文字大小
 TextTheme responsiveTextTheme(BuildContext context) {
-  final double w = MediaQuery.sizeOf(context).width;
-  final double screenScale = (w / 375).clamp(0.7, 1); // IPhone 8 宽度 375px
+  final size = MediaQuery.sizeOf(context);
+  final double s = min(size.width, size.height);
+  final double screenScale = (s / 375).clamp(0.7, 1); // IPhone 8 宽度 375px
   final double textScale = screenScale;
 
   final base = Theme.of(context).textTheme;
@@ -73,7 +82,8 @@ TextTheme responsiveTextTheme(BuildContext context) {
       fontSize: base.headlineLarge!.fontSize! * textScale,
     ),
     headlineMedium: base.headlineMedium?.copyWith(
-      fontSize: base.headlineMedium!.fontSize! * textScale,
+      // fontSize: base.headlineMedium!.fontSize! * textScale,
+      fontSize: 28 * textScale,
     ),
     headlineSmall: base.headlineSmall?.copyWith(
       fontSize: base.headlineSmall!.fontSize! * textScale,

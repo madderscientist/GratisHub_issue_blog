@@ -31,7 +31,7 @@ class _ResponsiveUIState extends State<ResponsiveUI> {
   late final userInfoSide = UserInfoSide(
     user: 'madderscientist',
     sideConfig: sideConfig,
-  );  // 个人信息侧栏
+  ); // 个人信息侧栏
   // 改顺序只需要改index
   late final List<_PageWithIcon> pages = [
     _PageWithIcon(
@@ -74,17 +74,12 @@ class _ResponsiveUIState extends State<ResponsiveUI> {
     ),
   ]..sort((a, b) => a.page.index.compareTo(b.page.index));
 
-  late final Widget _mainArea = KeyedSubtree(
+  late final Widget _mainArea = Expanded(
     key: GlobalKey(), // 必须全局，不然每次切换页面都会重建
-    // 主内容不设置背景色，用父元素的
-    child: Expanded(
-      child: ValueListenableBuilder<int>(
-        valueListenable: pageIndex,
-        builder: (_, index, _) => IndexedStack(
-          index: index,
-          children: [for (final p in pages) p.page],
-        ),
-      ),
+    child: ValueListenableBuilder<int>(
+      valueListenable: pageIndex,
+      builder: (_, index, _) =>
+          IndexedStack(index: index, children: [for (final p in pages) p.page]),
     ),
   );
 
@@ -247,7 +242,7 @@ class _ResponsiveUIState extends State<ResponsiveUI> {
         // 再次返回则退出应用
         if (_isExitWarning) {
           ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          await SystemNavigator.pop();  // 真正退出应用（Android）
+          await SystemNavigator.pop(); // 真正退出应用（Android）
           // iOS 上系统自己会处理返回桌面
           return;
         } else {
@@ -283,19 +278,29 @@ class _ResponsiveUIState extends State<ResponsiveUI> {
                 children: [
                   Expanded(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      padding: EdgeInsets.symmetric(
+                        vertical:
+                            Theme.of(context).textTheme.labelMedium?.fontSize ??
+                            11,
+                      ),
                       alignment: Alignment.center,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
                             pages[i].icon,
-                            color: selected
-                                ? themeColor
-                                : Colors.black38,
-                            size: 28,
+                            color: selected ? themeColor : Colors.black38,
+                            size: Theme.of(
+                              context,
+                            ).textTheme.headlineMedium?.fontSize,
                           ),
-                          const SizedBox(width: 14),
+                          SizedBox(
+                            width:
+                                Theme.of(
+                                  context,
+                                ).textTheme.bodyMedium?.fontSize ??
+                                14,
+                          ),
                           Text(
                             pages[i].title,
                             style: Theme.of(context).textTheme.titleLarge
@@ -315,8 +320,15 @@ class _ResponsiveUIState extends State<ResponsiveUI> {
                   // 右侧高亮竖条
                   Container(
                     width: 6,
-                    height: 48,
-                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    height:
+                        3 *
+                        (Theme.of(context).textTheme.bodyLarge?.fontSize ?? 16),
+                    margin: EdgeInsets.symmetric(
+                      vertical:
+                          0.5 *
+                          (Theme.of(context).textTheme.bodyLarge?.fontSize ??
+                              16),
+                    ),
                     decoration: BoxDecoration(
                       color: selected ? themeColor : Colors.black38,
                       borderRadius: BorderRadius.circular(3),
@@ -342,7 +354,10 @@ class _ResponsiveUIState extends State<ResponsiveUI> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               IconButton(
-                padding: EdgeInsets.symmetric(horizontal: Theme.of(context).textTheme.labelSmall?.fontSize ?? 9),
+                padding: EdgeInsets.symmetric(
+                  horizontal:
+                      Theme.of(context).textTheme.labelSmall?.fontSize ?? 9,
+                ),
                 icon: const Icon(Icons.menu),
                 onPressed: () {
                   if (sideConfig.value.sideWidthRatio == 0) {

@@ -56,31 +56,32 @@ class UserInfoSide {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              GestureDetector(
-                onTap: () {
-                  if (htmlUrl != null) launchUrl(Uri.parse(htmlUrl));
-                },
-                child: CircleAvatar(
-                  radius: AvatarRadius,
-                  backgroundImage: NetworkImage(avatarUrl),
-                  backgroundColor: Colors.grey[200],
+              MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: GestureDetector(
+                  onTap: () {
+                    if (htmlUrl != null) launchUrl(Uri.parse(htmlUrl));
+                  },
+                  child: CircleAvatar(
+                    radius: AvatarRadius,
+                    backgroundImage: NetworkImage(avatarUrl),
+                    backgroundColor: Colors.grey[200],
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
-              Text(login, style: Theme.of(context).textTheme.titleLarge),
+              SelectableText(login, style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 12),
               ConstrainedBox(
                 constraints: const BoxConstraints(
                   maxWidth: AvatarRadius * 2 * 2,
                 ), // 最大宽度为头像2倍
-                child: Text(
+                child: SelectableText(
                   bio,
                   style: Theme.of(
                     context,
                   ).textTheme.bodyMedium?.copyWith(color: Colors.grey[700]),
                   textAlign: TextAlign.center,
-                  overflow: TextOverflow.visible,
-                  softWrap: true,
                 ),
               ),
             ],

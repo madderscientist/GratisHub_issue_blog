@@ -72,6 +72,7 @@ class _ReadmePageState extends State<ReadmePage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final _ = MediaQuery.of(context).size; // 监听尺寸变化，强制 rebuild
     if (readmeContent == null) {
       return const Center(child: CircularProgressIndicator());
     }

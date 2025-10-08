@@ -117,7 +117,7 @@ class _OverviewPageState extends State<OverviewPage>
             ],
           ),
         ),
-        SizedBox(width: 18),
+        SizedBox(width: Theme.of(context).textTheme.titleMedium?.fontSize ?? 17.0),
         Expanded(
           child: _StatCard(
             icon: Icons.storage,

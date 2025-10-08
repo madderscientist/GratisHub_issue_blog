@@ -21,20 +21,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Gratishub',
+      title: 'GratisHub Issue Blog',
       // 静态主题：颜色、组件样式等
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: themeColor),
-        useMaterial3: true,
-        appBarTheme: const AppBarTheme(
-          backgroundColor: themeColor,
-          foregroundColor: Colors.black,
-          systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarColor: themeColor,
-            statusBarIconBrightness: Brightness.light,
-          ),
-        ),
-      ),
+      theme: themeData,
       // 动态层：只覆盖 textTheme，窗口 resize 时才会重新算
       builder: (context, child) {
         return MediaQuery(

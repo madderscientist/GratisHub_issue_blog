@@ -49,7 +49,6 @@ class _WebImageState extends State<WebImage> {
       img.style
         ..width = widget.width != null ? '${widget.width}px' : 'auto'
         ..height = widget.height != null ? '${widget.height}px' : 'auto'
-        ..cursor = 'default'
         ..pointerEvents = 'none';
       // 不能用js的onclick，不然会穿透flutter的元素响应点击
       img.onLoad.listen((_) {
@@ -115,11 +114,14 @@ class _WebImageState extends State<WebImage> {
                   ),
                   Positioned.fill(
                     child: widget.allowClickToEnlarge
-                        ? GestureDetector(
-                            onTap: () => showImageOverlay(_viewType),
-                            behavior: HitTestBehavior.translucent,
-                            child: block,
-                          )
+                        ? MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            child: GestureDetector(
+                              onTap: () => showImageOverlay(_viewType),
+                              behavior: HitTestBehavior.translucent,
+                              child: block,
+                            ),
+                        )
                         : block,
                   ),
                 ],

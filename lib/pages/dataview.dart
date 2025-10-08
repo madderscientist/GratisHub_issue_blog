@@ -151,40 +151,28 @@ class _DataviewPageState extends State<DataviewPage>
           },
           child: NotificationListener<ScrollNotification>(
             onNotification: (ScrollNotification scrollInfo) {
+              // 到底部，加载更多
               if (scrollInfo.metrics.pixels >=
-                      scrollInfo.metrics.maxScrollExtent - 20 &&
-                  scrollInfo is ScrollEndNotification) {
-                // 到底部，加载更多
-                if (displayedIssues.value == latest) {
-                  if (issueRequester.isLoading) return false;
-                  if (!issueRequester.hasNext) return false;
-                  issueRequester
-                      .fetchNext()
-                      .then((newIssues) {
-                        if (newIssues.isNotEmpty) {
-                          latest!.addAll(newIssues);
-                          displayedIssues.notify();
-                        }
-                      })
-                      .catchError((e) {
-                        showError(e.toString());
-                      });
-                } else if (searcher != null) {
-                  // 筛选的下一页
-                  if (searcher!.isLoading) return false;
-                  if (!searcher!.hasNext) return false;
-                  searcher!
-                      .fetchNext()
-                      .then((newIssues) {
-                        if (newIssues.isNotEmpty) {
-                          displayedIssues.value.addAll(newIssues);
-                          displayedIssues.notify();
-                        }
-                      })
-                      .catchError((e) {
-                        showError(e.toString());
-                      });
-                }
+                      scrollInfo.metrics.maxScrollExtent - 40) {
+                final loader = displayedIssues.value == latest
+                    ? issueRequester
+                    : searcher;
+                if (loader == null) return false;
+                if (loader.isLoading || !loader.hasNext) return false;
+                final p = loader.fetchNext();
+                displayedIssues.notify(); // 显示加载动画
+                p
+                    .then((newIssues) {
+                      if (newIssues.isNotEmpty) {
+                        displayedIssues.value.addAll(newIssues);
+                      }
+                    })
+                    .catchError((e) {
+                      showError(e.toString());
+                    })
+                    .whenComplete(() {
+                      displayedIssues.notify();
+                    });
               }
               return false;
             },
@@ -206,7 +194,10 @@ class _DataviewPageState extends State<DataviewPage>
                   if (index < issues.length) {
                     return buildCard(context, issues[index]);
                   } else {
-                    return Center(child: CircularProgressIndicator());
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10.0),
+                      child: Center(child: CircularProgressIndicator()),
+                    );
                   }
                 },
               ),
@@ -236,10 +227,8 @@ class _DataviewPageState extends State<DataviewPage>
         sc.notify();
       }
     }
-    sc.value.sideBuilder = issue.buildDetail(
-      sc,
-      onClose: onClose
-    );
+
+    sc.value.sideBuilder = issue.buildDetail(sc, onClose: onClose);
     sc.value.close = onClose;
     sc.value.sideWidthRatio = isLandscape ? 0.5 : 1;
     sc.value.showNavigator = false;
