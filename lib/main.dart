@@ -8,7 +8,7 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
-      statusBarColor: Colors.purple, // 状态栏背景色
+      statusBarColor: Colors.transparent, // 状态栏背景色
       statusBarIconBrightness: Brightness.light, // 状态栏图标颜色
     ),
   );
@@ -24,13 +24,13 @@ class MyApp extends StatelessWidget {
       title: 'Gratishub',
       // 静态主题：颜色、组件样式等
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
+        colorScheme: ColorScheme.fromSeed(seedColor: themeColor),
         useMaterial3: true,
         appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.purple,
+          backgroundColor: themeColor,
           foregroundColor: Colors.black,
           systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarColor: Colors.purple,
+            statusBarColor: themeColor,
             statusBarIconBrightness: Brightness.light,
           ),
         ),

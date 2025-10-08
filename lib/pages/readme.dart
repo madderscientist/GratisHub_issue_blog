@@ -89,6 +89,12 @@ class _ReadmePageState extends State<ReadmePage>
 
   /// 默认侧边栏：目录
   Widget sideBuilder(BuildContext context) {
-    return TocWidget(controller: tocController);
+    return TocWidget(
+      controller: tocController,
+      tocTextStyle: Theme.of(context).textTheme.bodyLarge,
+      currentTocTextStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
+        color: Theme.of(context).colorScheme.primary,
+      ),
+    );
   }
 }

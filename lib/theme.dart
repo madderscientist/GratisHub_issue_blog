@@ -3,6 +3,8 @@ import 'package:markdown_widget/markdown_widget.dart';
 
 MarkdownConfig myMarkdownConfig = MarkdownConfig.defaultConfig;
 
+const Color themeColor = Colors.purpleAccent;
+
 TextTheme responsiveTextTheme(BuildContext context) {
   final double w = MediaQuery.sizeOf(context).width;
   final double screenScale = (w / 375).clamp(0.7, 1); // IPhone 8 宽度 375px

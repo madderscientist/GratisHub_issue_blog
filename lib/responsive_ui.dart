@@ -8,6 +8,7 @@ import 'hide_drawer.dart';
 import 'config.dart';
 import 'pages/user_side.dart';
 import 'pages/readme.dart';
+import 'theme.dart';
 
 /// 主页面 响应式布局
 class ResponsiveUI extends StatefulWidget {
@@ -277,7 +278,7 @@ class _ResponsiveUIState extends State<ResponsiveUI> {
           return InkWell(
             onTap: () => pageIndex.value = i,
             child: Container(
-              color: selected ? Colors.purpleAccent.withAlpha(20) : null,
+              color: selected ? themeColor.withAlpha(20) : null,
               child: Row(
                 children: [
                   Expanded(
@@ -290,7 +291,7 @@ class _ResponsiveUIState extends State<ResponsiveUI> {
                           Icon(
                             pages[i].icon,
                             color: selected
-                                ? Colors.purpleAccent
+                                ? themeColor
                                 : Colors.black38,
                             size: 28,
                           ),
@@ -317,7 +318,7 @@ class _ResponsiveUIState extends State<ResponsiveUI> {
                     height: 48,
                     margin: const EdgeInsets.symmetric(vertical: 8),
                     decoration: BoxDecoration(
-                      color: selected ? Colors.purpleAccent : Colors.black38,
+                      color: selected ? themeColor : Colors.black38,
                       borderRadius: BorderRadius.circular(3),
                     ),
                   ),
@@ -368,7 +369,7 @@ class _ResponsiveUIState extends State<ResponsiveUI> {
                         border: Border(
                           bottom: BorderSide(
                             color: selectedIndex == i
-                                ? Colors.purpleAccent
+                                ? themeColor
                                 : Colors.transparent,
                             width: 3,
                           ),

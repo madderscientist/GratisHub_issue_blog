@@ -5,6 +5,7 @@ import 'package:gratishub/github_request.dart';
 import '../lazy_notifier.dart';
 import '../common.dart';
 import '../config.dart';
+import '../theme.dart';
 
 /// issue统计概览页面 侧边栏可自定义
 /// 需要搭配 https://github.com/madderscientist/issueStats 使用
@@ -212,7 +213,7 @@ class _OverviewPageState extends State<OverviewPage>
     final labelList = stat!.labels.entries.toList();
 
     // 生成和 labelList 长度一致的同一色系颜色
-    final baseColor = Colors.purpleAccent;
+    final baseColor = themeColor;
     final int n = labelList.length;
     final defaultColors = List.generate(n, (i) {
       // 通过 HSL 亮度调整生成不同深浅的蓝色
