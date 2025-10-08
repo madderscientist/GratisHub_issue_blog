@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'lazy_notifier.dart';
@@ -100,8 +101,10 @@ class _ResponsiveUIState extends State<ResponsiveUI> {
 
   @override
   Widget build(BuildContext context) {
+    // 判断为横屏：宽度超大，否则宽度大于高度
     final size = MediaQuery.of(context).size;
-    final bool isLandscape = size.width >= size.height;
+    final bool isLandscape =
+        size.width >= AppTheme.maxPageWidth || size.width >= size.height;
     _lastIsLandscape ??= isLandscape;
     _lastWidth ??= size.width * 0.9;
 
@@ -131,8 +134,12 @@ class _ResponsiveUIState extends State<ResponsiveUI> {
                 valueListenable: sideConfig,
                 builder: (context, value, child) {
                   final sideWidth = (value.sideWidthRatio > 0)
-                      ? value.sideWidthRatio * maxWidth
-                      : size.height * 0.45;
+                      ? value.sideWidthRatio *
+                            maxWidth // 要求的宽度
+                      : (size.height * AppTheme.sideWPH).clamp(
+                          min(AppTheme.minSideWidth, maxWidth * 0.5).toDouble(),
+                          AppTheme.maxSideWidth,
+                        ); // 默认宽度
                   Widget childWidget;
                   if (value.showNavigator) {
                     childWidget = Column(
@@ -147,7 +154,7 @@ class _ResponsiveUIState extends State<ResponsiveUI> {
                   return AnimatedContainer(
                     duration: Config.sideAnimationDuration,
                     curve: Curves.easeInOutSine,
-                    width: sideWidth.clamp(300, maxWidth),
+                    width: sideWidth,
                     decoration: const BoxDecoration(
                       color: Colors.white,
                       border: Border(
@@ -273,7 +280,7 @@ class _ResponsiveUIState extends State<ResponsiveUI> {
           return InkWell(
             onTap: () => pageIndex.value = i,
             child: Container(
-              color: selected ? themeColor.withAlpha(20) : null,
+              color: selected ? AppTheme.themeColor.withAlpha(20) : null,
               child: Row(
                 children: [
                   Expanded(
@@ -289,7 +296,9 @@ class _ResponsiveUIState extends State<ResponsiveUI> {
                         children: [
                           Icon(
                             pages[i].icon,
-                            color: selected ? themeColor : Colors.black38,
+                            color: selected
+                                ? AppTheme.themeColor
+                                : Colors.black38,
                             size: Theme.of(
                               context,
                             ).textTheme.headlineMedium?.fontSize,
@@ -330,7 +339,7 @@ class _ResponsiveUIState extends State<ResponsiveUI> {
                               16),
                     ),
                     decoration: BoxDecoration(
-                      color: selected ? themeColor : Colors.black38,
+                      color: selected ? AppTheme.themeColor : Colors.black38,
                       borderRadius: BorderRadius.circular(3),
                     ),
                   ),
@@ -384,7 +393,7 @@ class _ResponsiveUIState extends State<ResponsiveUI> {
                         border: Border(
                           bottom: BorderSide(
                             color: selectedIndex == i
-                                ? themeColor
+                                ? AppTheme.themeColor
                                 : Colors.transparent,
                             width: 3,
                           ),

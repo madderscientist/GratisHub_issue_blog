@@ -62,6 +62,7 @@ class _DataviewPageState extends State<DataviewPage>
   late LazyNotifier<List<RawIssue>> displayedIssues = LazyNotifier([]);
 
   Future<List<Null>>? inited; // 表明请求已经发起，不代表已经加载
+  final ScrollController _listViewController = ScrollController();
 
   @override
   void initState() {
@@ -108,6 +109,27 @@ class _DataviewPageState extends State<DataviewPage>
     selectedLabels.dispose();
     displayedIssues.dispose();
     _searchController.dispose();
+    _listViewController.dispose();
+  }
+
+  void _requestMore() {
+    final loader = displayedIssues.value == latest ? issueRequester : searcher;
+    if (loader == null) return;
+    if (loader.isLoading || !loader.hasNext) return;
+    final p = loader.fetchNext();
+    displayedIssues.notify(); // 显示加载动画
+    p
+        .then((newIssues) {
+          if (newIssues.isNotEmpty) {
+            displayedIssues.value.addAll(newIssues);
+          }
+        })
+        .catchError((e) {
+          showError(e.toString());
+        })
+        .whenComplete(() {
+          displayedIssues.notify();
+        });
   }
 
   @override
@@ -124,6 +146,15 @@ class _DataviewPageState extends State<DataviewPage>
         if (issues.isEmpty && searcher != null && searcher!.isLoading) {
           return const Center(child: CircularProgressIndicator());
         }
+        // 监听尺寸变化，不然从如果运行时高度增加不会自动加载下一页
+        final _ = MediaQuery.of(context).size;
+        // 如果内容高度不足以滚动，且还有下一页，自动加载
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_listViewController.hasClients &&
+              _listViewController.position.maxScrollExtent == 0) {
+            _requestMore();
+          }
+        });
         return RefreshIndicator(
           onRefresh: () async {
             if (displayedIssues.value == latest) {
@@ -153,26 +184,8 @@ class _DataviewPageState extends State<DataviewPage>
             onNotification: (ScrollNotification scrollInfo) {
               // 到底部，加载更多
               if (scrollInfo.metrics.pixels >=
-                      scrollInfo.metrics.maxScrollExtent - 40) {
-                final loader = displayedIssues.value == latest
-                    ? issueRequester
-                    : searcher;
-                if (loader == null) return false;
-                if (loader.isLoading || !loader.hasNext) return false;
-                final p = loader.fetchNext();
-                displayedIssues.notify(); // 显示加载动画
-                p
-                    .then((newIssues) {
-                      if (newIssues.isNotEmpty) {
-                        displayedIssues.value.addAll(newIssues);
-                      }
-                    })
-                    .catchError((e) {
-                      showError(e.toString());
-                    })
-                    .whenComplete(() {
-                      displayedIssues.notify();
-                    });
+                  scrollInfo.metrics.maxScrollExtent - 40) {
+                _requestMore();
               }
               return false;
             },
@@ -182,6 +195,7 @@ class _DataviewPageState extends State<DataviewPage>
                 vertical: 3.0,
               ),
               child: ListView.separated(
+                controller: _listViewController,
                 physics: const BouncingScrollPhysics(
                   parent: AlwaysScrollableScrollPhysics(),
                 ),
@@ -391,34 +405,38 @@ class _DataviewPageState extends State<DataviewPage>
               ),
             ),
           ),
-          SizedBox(height: _searchTextSize / 1.5),
+          SizedBox(height: _searchTextSize / 3),
           Expanded(
             child: SingleChildScrollView(
-              child: ValueListenableBuilder<List<bool>>(
-                valueListenable: selectedLabels,
-                builder: (context, selected, _) {
-                  if (labels == null) return const SizedBox.shrink();
-                  return Wrap(
-                    spacing: 5,
-                    runSpacing: 3,
-                    children: List.generate(labels!.length, (i) {
-                      final label = labels![i];
-                      final isSelected = (selected.length > i)
-                          ? selected[i]
-                          : false;
-                      return GestureDetector(
-                        onTap: () {
-                          selectedLabels.value[i] = !selectedLabels.value[i];
-                          selectedLabels.notify();
-                        },
-                        child: label.build(context, selected: isSelected),
-                      );
-                    }),
-                  );
-                },
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: _searchTextSize / 3),
+                child: ValueListenableBuilder<List<bool>>(
+                  valueListenable: selectedLabels,
+                  builder: (context, selected, _) {
+                    if (labels == null) return const SizedBox.shrink();
+                    return Wrap(
+                      spacing: 5,
+                      runSpacing: 3,
+                      children: List.generate(labels!.length, (i) {
+                        final label = labels![i];
+                        final isSelected = (selected.length > i)
+                            ? selected[i]
+                            : false;
+                        return GestureDetector(
+                          onTap: () {
+                            selectedLabels.value[i] = !selectedLabels.value[i];
+                            selectedLabels.notify();
+                          },
+                          child: label.build(context, selected: isSelected),
+                        );
+                      }),
+                    );
+                  },
+                ),
               ),
             ),
           ),
+          SizedBox(height: _searchTextSize / 3),
           Row(
             children: [
               Expanded(

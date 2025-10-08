@@ -82,7 +82,7 @@ class _ReadmePageState extends State<ReadmePage>
         data: readmeContent!,
         selectable: true,
         markdownGenerator: mdHtmlSupport,
-        config: myMarkdownConfig,
+        config: AppTheme.myMarkdownConfig,
         tocController: tocController,
       ),
     );

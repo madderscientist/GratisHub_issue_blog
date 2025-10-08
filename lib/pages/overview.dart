@@ -213,7 +213,7 @@ class _OverviewPageState extends State<OverviewPage>
     final labelList = stat!.labels.entries.toList();
 
     // 生成和 labelList 长度一致的同一色系颜色
-    final baseColor = themeColor;
+    final baseColor = AppTheme.themeColor;
     final int n = labelList.length;
     final defaultColors = List.generate(n, (i) {
       // 通过 HSL 亮度调整生成不同深浅的蓝色

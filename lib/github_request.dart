@@ -316,8 +316,8 @@ class IssueLabel {
         : null;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      margin: const EdgeInsets.only(right: 6, bottom: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      margin: const EdgeInsets.only(right: 4, bottom: 2),
       decoration: BoxDecoration(
         color: baseColor,
         borderRadius: BorderRadius.circular(99), // 胶囊形状
@@ -473,7 +473,7 @@ class RawIssue {
                     data: raw,
                     selectable: true,
                     generator: mdHtmlSupport,
-                    config: myMarkdownConfig,
+                    config: AppTheme.myMarkdownConfig,
                   ),
                   // 署名
                   if (user.isNotEmpty || time.isNotEmpty)
@@ -587,7 +587,7 @@ class IssueComment {
               ),
             ],
           ),
-          MarkdownBlock(data: raw, selectable: true, generator: mdHtmlSupport, config: myMarkdownConfig),
+          MarkdownBlock(data: raw, selectable: true, generator: mdHtmlSupport, config: AppTheme.myMarkdownConfig),
           const Divider(),
         ],
       ),
