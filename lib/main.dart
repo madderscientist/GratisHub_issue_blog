@@ -33,9 +33,9 @@ class MyApp extends StatelessWidget {
             ).clamp(minScaleFactor: 0.1, maxScaleFactor: 1.15),
           ),
           child: Theme(
-            data: Theme.of(
-              context,
-            ).copyWith(textTheme: AppTheme.responsiveTextTheme(context)),
+            data: AppTheme.themeData.copyWith(
+              textTheme: AppTheme.responsiveTextTheme(context),
+            ),
             child: child!,
           ),
         );
@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
       home: Scaffold(
         resizeToAvoidBottomInset: false,
         // 仅当有背景图 / html设置了background 才用透明
-        backgroundColor: Colors.white,  // 不然在windows下是黑色
+        backgroundColor: Colors.white, // 不然在windows下是黑色
         body: SafeArea(
           // 手机上避开刘海等区域
           child: Center(
@@ -66,7 +66,7 @@ class MyApp extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Theme.of(context).scaffoldBackgroundColor,
+                      AppTheme.themeData.scaffoldBackgroundColor,
                       Colors.white,
                     ],
                     stops: const [0.0, 0.6],

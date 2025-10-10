@@ -148,15 +148,17 @@ class GithubRequester<T> {
   final http.Client? client; // 允许传入自定义的client以提升性能
   String _nextUrl = "";
   int perPage;
-  int issueNumber = -1; // 记录总共请求了多少个issues -1表示没开始
+  int issueNumber = -1; // 记录总共请求了多少个issues -1表示没开始，以兼容resultScale=0时的hasNext
   bool isLoading = false;
   final List<T> Function(List<dynamic>) parseGithub;
+  final int resultScale; // 请求至少有多少结果，0表示不知道
 
   GithubRequester({
     this.perPage = 20,
     required this.baseUrl,
     required this.parseGithub,
     this.client,
+    this.resultScale = 0,
   });
 
   static GithubRequester<RawIssue> latestIssueRequester({
@@ -164,12 +166,14 @@ class GithubRequester<T> {
     required String owner,
     required String repo,
     http.Client? client,
+    int? resultScale,
   }) {
     return GithubRequester<RawIssue>(
       perPage: perPage,
       baseUrl: "https://api.github.com/repos/$owner/$repo/issues",
       parseGithub: RawIssue.parseGithub,
       client: client,
+      resultScale: resultScale ?? 0,
     );
   }
 
@@ -180,6 +184,7 @@ class GithubRequester<T> {
     String keyword = '',
     List<String> labels = const [],
     http.Client? client,
+    int? resultScale,
   }) {
     final query = [
       if (keyword.trim().isNotEmpty) Uri.encodeComponent(keyword),
@@ -193,6 +198,7 @@ class GithubRequester<T> {
       baseUrl: url,
       parseGithub: RawIssue.parseGithub,
       client: client,
+      resultScale: resultScale ?? 0,
     );
   }
 
@@ -201,18 +207,21 @@ class GithubRequester<T> {
     required String
     issueUrl, // 形如 https://api.github.com/repos/zytx121/je/issues/1
     http.Client? client,
+    int? resultScale,
   }) {
     return GithubRequester<IssueComment>(
       perPage: perPage,
       baseUrl: '$issueUrl/comments',
       parseGithub: IssueComment.parseGithub,
       client: client,
+      resultScale: resultScale ?? 0,
     );
   }
 
   int get pageNext => (issueNumber ~/ perPage) + 1;
-  bool get hasNext => _nextUrl.isNotEmpty || issueNumber < 0;
+  bool get hasNext => _nextUrl.isNotEmpty || issueNumber < resultScale;
 
+  /// 用原始页数请求（已请求数小于resultScale时的保底）
   String makeUrl() {
     String url = baseUrl;
     if (url.endsWith('?') || url.endsWith('&')) {
@@ -257,6 +266,7 @@ class GithubRequester<T> {
         response = await client!.get(Uri.parse(url));
       }
     } catch (e) {
+      if (issueNumber == 0) issueNumber = -1;
       isLoading = false;
       throw Exception("network request failed ╥﹏╥");
     }
@@ -429,7 +439,7 @@ class RawIssue {
     return (BuildContext context) {
       final size = MediaQuery.of(context).size;
       return CustomScrollView(
-        key: ValueKey('issue_${url}_$time'),  // 如果不传，会复用一些组件导致不刷新
+        key: ValueKey('issue_${url}_$time'), // 如果不传，会复用一些组件导致不刷新
         slivers: [
           SliverAppBar(
             title: LongPressCopyBubble(text: title),
@@ -463,7 +473,8 @@ class RawIssue {
           SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.symmetric(
-                horizontal: Theme.of(context).textTheme.bodySmall?.fontSize ?? 12.0,
+                horizontal:
+                    Theme.of(context).textTheme.bodySmall?.fontSize ?? 12.0,
                 vertical: 0,
               ),
               child: Column(
@@ -496,9 +507,8 @@ class RawIssue {
                         if (comments.isNotEmpty)
                           Text(
                             'Comments',
-                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: Theme.of(context).textTheme.titleLarge
+                                ?.copyWith(fontWeight: FontWeight.bold),
                           ),
                         if (comments.isNotEmpty)
                           ...comments.map((e) => e.build(context)),
@@ -587,7 +597,12 @@ class IssueComment {
               ),
             ],
           ),
-          MarkdownBlock(data: raw, selectable: true, generator: mdHtmlSupport, config: AppTheme.myMarkdownConfig),
+          MarkdownBlock(
+            data: raw,
+            selectable: true,
+            generator: mdHtmlSupport,
+            config: AppTheme.myMarkdownConfig,
+          ),
           const Divider(),
         ],
       ),
