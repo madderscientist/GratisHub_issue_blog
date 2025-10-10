@@ -76,15 +76,13 @@ class _ReadmePageState extends State<ReadmePage>
     if (readmeContent == null) {
       return const Center(child: CircularProgressIndicator());
     }
-    return Padding(
+    return MarkdownWidget(
+      data: readmeContent!,
+      selectable: true,
+      markdownGenerator: mdHtmlSupport,
+      config: AppTheme.myMarkdownConfig,
+      tocController: tocController,
       padding: const EdgeInsets.all(12.0),
-      child: MarkdownWidget(
-        data: readmeContent!,
-        selectable: true,
-        markdownGenerator: mdHtmlSupport,
-        config: AppTheme.myMarkdownConfig,
-        tocController: tocController,
-      ),
     );
   }
 

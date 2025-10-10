@@ -76,26 +76,24 @@ class _OverviewPageState extends State<OverviewPage>
       return const Center(child: CircularProgressIndicator());
     }
     return SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.all(
-          Theme.of(context).textTheme.titleMedium?.fontSize ?? 17.0,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Latest Additions',
-              style: Theme.of(
-                context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: Theme.of(context).textTheme.titleMedium?.fontSize),
-            _buildLastCreated(context),
-            SizedBox(height: Theme.of(context).textTheme.titleLarge?.fontSize),
-            _buildTopLabels(context),
-            _buildLabelDistributionChart(context),
-          ],
-        ),
+      padding: EdgeInsets.all(
+        Theme.of(context).textTheme.titleMedium?.fontSize ?? 17.0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Latest Additions',
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: Theme.of(context).textTheme.titleMedium?.fontSize),
+          _buildLastCreated(context),
+          SizedBox(height: Theme.of(context).textTheme.titleLarge?.fontSize),
+          _buildTopLabels(context),
+          _buildLabelDistributionChart(context),
+        ],
       ),
     );
   }
@@ -117,7 +115,9 @@ class _OverviewPageState extends State<OverviewPage>
             ],
           ),
         ),
-        SizedBox(width: Theme.of(context).textTheme.titleMedium?.fontSize ?? 17.0),
+        SizedBox(
+          width: Theme.of(context).textTheme.titleMedium?.fontSize ?? 17.0,
+        ),
         Expanded(
           child: _StatCard(
             icon: Icons.storage,
