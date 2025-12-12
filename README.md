@@ -134,6 +134,10 @@ flutter web已经完全转用canvas了，所以图片必须请求原始数据，
 
 值得一提的是，图片放大用的是js，因此非常丝滑~
 
+但是有两个问题：
+1. 为了让超大的图自动缩放，我设置了`LayoutBuilder`。但是，`markdown widget` 库的表格会读取子元素的大小，使用`LayoutBuilder`会报错。为了通用性，我将`LayoutBuilder`从`WebImage`中移除了，并要求外界提供`maxWidth`。但没有`LayoutBuilder`就无法获取`maxWidth`，没有`maxWidth`就无法让大图撑满。我做出了以下妥协：在表格中的一般是小图，不会超过`maxWidth`，因此随便给一个较大的宽度就够了；而其余情况大图的概率更大，所以用`LayoutBuilder`。选用哪种方案用类[`SvgNode`](./lib/markdown_custom/more_img.dart)存储一个flag（`SvgNode`是`WebImage`的包裹，用于兼容`markdown widget`库），flag的赋值由表格类遍历子元素时进行。
+2. `HtmlElementView` 的存在会导致外面的onTap不被触发。只要onTap的子元素中有`HtmlElementView`，onTap就不会被触发，无论内部有没有其他的onTap。这会导致如果图片外面是Link，则点击HTML图片（或者遮罩）不会触发父元素Link的onTap（但是会触发遮罩的onTap；但是没有遮罩也不会触发父元素的）。`markdown widget` 库的处理方法是：build时遍历子节点，给每个子节点用`InkWell`包裹，其onTap就是跳转动作。受此启发，我进行了如下设计：设置onTap回调为`SvgNode`和`WebImage`的成员属性，由遮罩的onTap触发；重载了`LinkNode`，build前会遍历子元素，如果是`SvgNode`，则更改onTap属性再build（build时`SvgNode`将onTap传递给`WebImage`）。之所以这样做，是因为无法向上查看父节点，只能向下查看子节点。
+
 ### 尺寸与重构
 发现尺寸变化后有的widget不会重绘。解决方法是在build中加一行：
 ```dart
